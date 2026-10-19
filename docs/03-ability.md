@@ -2,9 +2,9 @@
 
 [← README](../README.md)
 
-역할별 능력(Mirror Pull, 폭탄 인계, 상호작용, 유령의 바람 밀치기)을 같은 규칙으로 발동하기 위해 처음 설계한 어빌리티 구조입니다.
+역할별 능력 — Mirror Pull(동기화 스킬), 폭탄 인계, 상호작용, 유령의 바람 밀치기 — 을 같은 규칙으로 발동하기 위해 처음 설계한 어빌리티 구조입니다.
 
-> 이 문서는 **초기 커밋 기준**입니다 — PR #1 (`fb62ea27`, 2026-07-14), PR #30 (`65cbdad2`, 2026-08-09).
+> 이 문서는 **초기 커밋 기준**입니다 — 팀 저장소 PR #1 (2026-07-14), PR #30 (2026-08-09).
 > 이후 팀 리팩토링(2026-10)으로 어빌리티가 플레이어 예측 시스템에 편입되면서 현재 구조는 크게 달라졌고, 그 부분은 이 문서 범위 밖입니다.
 
 ---
@@ -90,7 +90,7 @@ flowchart LR
 ScriptableObject는 모든 플레이어가 공유하는 에셋 하나입니다. 게이지나 쿨다운을 SO에 두면 술래가 둘일 때 게이지를 공유하는 버그가 납니다. 설정값은 SO, 런타임 상태는 플레이어별 `AbilityController`로 엄격히 나눴습니다.
 
 ```csharp
-// fb62ea27: AbilityData.cs — 공통 검사는 컨트롤러, 어빌리티는 서버 전용 훅만 구현
+// PR #1 시점 AbilityData.cs — 공통 검사는 컨트롤러, 어빌리티는 서버 전용 훅만 구현
 /// <summary>
 /// Ability-specific activation condition (e.g. target in range). Server only.
 /// Common checks (cooldown/gauge/duplicate active) are AbilityController's job.
@@ -137,7 +137,7 @@ GAS처럼 사망·피격까지 어빌리티로 만드는 것은 기각했습니�
 탈락한 플레이어가 유령이 되는 시스템을 추가하면서, 유령 전용 능력을 이 구조로 만들었습니다. `AbilityData`와 `AbilityController`는 수정하지 않았습니다.
 
 ```csharp
-// 65cbdad2: WindPullAbilityData.cs — 새 어빌리티 = SO 하위 클래스 하나
+// PR #30 시점 WindPullAbilityData.cs — 새 어빌리티 = SO 하위 클래스 하나
 /// <summary>
 /// 유령의 바람 밀치기. 서버가 전방 구체 판정으로 살아있는 플레이어를 찾아
 /// 각자의 PushEffectReceiver에 밀침 속도를 주입한다.
@@ -153,7 +153,7 @@ public class WindPullAbilityData : AbilityData
 ```
 
 ```csharp
-// 65cbdad2: WindPullAbilityData.OnActivateServer 중
+// PR #30 시점 WindPullAbilityData.OnActivateServer 중
 Vector3 origin = owner.transform.position + owner.transform.forward * ForwardOffset;
 Collider[] hits = Physics.OverlapSphere(origin, Radius, LayerDefine.Player, QueryTriggerInteraction.Ignore);
 for (int i = 0; i < hits.Length; i++)
