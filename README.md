@@ -3,9 +3,16 @@
 10~20명이 함께 하는 온라인 술래잡기 게임입니다. 술래가 스킬(Mirror Pull)을 쓰면 술래의 이동 입력이 모든 도망자에게 그대로 적용되는 것이 핵심 규칙입니다.
 G-Star 2026 인디 쇼케이스에 선정됐고, 스팀 출시를 준비하고 있습니다.
 
+<div align="center">
+
+[![포트폴리오 영상](https://img.youtube.com/vi/lI4AttoxDCc/maxresdefault.jpg)](https://youtu.be/lI4AttoxDCc)
+
+**🎥 [포트폴리오 영상 보기](https://youtu.be/lI4AttoxDCc)** &nbsp;
+</div>
+
 <!-- MEDIA: 대표 GIF 1개 — 발판·무너지는 바닥 위에서 여러 플레이어가 움직이고, 술래가 Mirror Pull로 도망자들을 끌고 가는 장면 -->
 
-> 열람용 저장소입니다. 스팀 출시 전이라 원본 소스는 올리지 않았고, 제가 맡은 코드 일부를 [`docs/`](docs/)의 시스템별 문서에 발췌했습니다.
+> 열람용 저장소입니다. 스팀 출시 예이라 원본 소스는 올리지 않았고, 제가 맡은 코드 일부를 [`docs/`](docs/)의 시스템별 문서에 발췌했습니다.
 
 ---
 
@@ -32,9 +39,12 @@ G-Star 2026 인디 쇼케이스에 선정됐고, 스팀 출시를 준비하고 �
 
 ---
 
+
 ## 구현한 시스템
 
 ### 1. 맵 장애물
+
+https://github.com/user-attachments/assets/bd8814b2-6207-4567-927f-c85bd820fa24
 
 무너지는 바닥과 다리, 플레이어가 지나가면 닫히는 격벽, 점프대, 올라탈 수 있는 이동·회전 발판을 만들었습니다. 장애물 프리팹을 맵에 배치하고 인스펙터에서 주기나 타이밍만 조정하면 됩니다.
 
@@ -63,6 +73,9 @@ flowchart LR
 
 ### 2. 입력 미러링 (Mirror Pull)
 
+https://github.com/user-attachments/assets/40378aca-ce7a-47ca-ae63-e73a72c8c77f
+
+
 술래의 이동 입력을 조금 늦춰서 모든 도망자의 수평 이동에 적용하는 스킬입니다. 처음 구조를 만들었고, 이후 서버 검증을 붙였습니다.
 
 <!-- MEDIA: 술래가 Mirror Pull을 쓰는 동안 여러 도망자가 술래의 입력대로 움직이는 장면 -->
@@ -79,13 +92,14 @@ flowchart LR
 
 ### 3. 어빌리티 (초기 설계)
 
-![WindPullAbilityData 인스펙터](docs/images/wind_pull_ability.png)
-
-유령 바람 밀치기 에셋입니다. 준비 시간(Preparation Duration)은 이후 팀원이 추가한 항목입니다.
+https://github.com/user-attachments/assets/117a8171-1b48-427b-a2ea-64661f590134
 
 역할마다 다른 능력(상호작용, 폭탄 넘기기, Mirror Pull)을 같은 규칙으로 발동하는 구조를 설계했습니다. Mirror Pull과 유령의 바람 밀치기는 제가, 폭탄 넘기기는 팀원이 이 구조로 만들었습니다.
 
 - `AbilityData`(ScriptableObject)는 쿨다운, 게이지, 발동 방식(즉시 / 누르는 동안) 같은 설정과 서버에서 실행할 동작만 갖습니다. 게이지와 쿨다운 같은 상태는 플레이어마다 붙는 `AbilityController`가 갖습니다.
+![WindPullAbilityData 인스펙터](docs/images/wind_pull_ability.png)
+
+
 - 클라이언트는 슬롯 번호만 보내고, 서버가 쿨다운 → 게이지 → 어빌리티별 조건 순으로 다시 검사합니다.
 - 키 입력은 어빌리티가 아니라 역할별 목록(`AbilitySet`)에 넣었습니다. 게임 규칙이 키 입력 없이 어빌리티를 발동하는 경우를 위해, 코드로 발동하는 경로도 같은 검사를 거치게 했습니다.
 - 유령의 바람 밀치기는 `AbilityData` 하위 클래스 하나로 추가했습니다. 서버는 밀침 속도와 남은 틱만 넣고 이동 계산이 그 값을 쓰기 때문에 예측과 서버 결과가 같습니다. 이 밀침 처리는 나중에 격벽이 닫힐 때 플레이어를 밀어내는 데도 썼습니다.
